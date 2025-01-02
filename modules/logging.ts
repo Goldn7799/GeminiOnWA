@@ -5,6 +5,7 @@ const root: string = process.cwd()
 
 const add = (text: string) => {
   const date: Date = new Date()
+  console.log(`[${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}] ${text}`)
   logs.push([
     `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
     text
