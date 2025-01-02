@@ -1,17 +1,49 @@
+/**
+ * @license
+ * Copyright 2025 SGStudio Under Syeif Sultoni Akbar
+ * 
+ * Licensed under GNU General Public License Version 3 (the "License")
+ * For more information on this, see
+ * 
+ *  https://www.gnu.org/licenses/
+ * 
+ * To "modify" a work means to copy from or adapt all or part of the work
+ * in a fashion requiring copyright permission, other than the making of an
+ * exact copy.  The resulting work is called a "modified version" of the
+ * earlier work or a work "based on" the earlier work.
+ */
+
 import fs from 'fs'
 
+/**
+ * Local Variable to store some logs.
+ * @public
+ */
 const logs: Array<(string | number)[]> = []
+
+/**
+ * Root Path on process.
+ * @public
+ */
 const root: string = process.cwd()
 
-const add = (text: string) => {
+/**
+ * Add A log to {@link logs}.
+ * @public
+ */
+const add = (Text: string) => {
   const date: Date = new Date()
-  console.log(`[${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}] ${text}`)
+  console.log(`[${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}] ${Text}`)
   logs.push([
     `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
-    text
+    Text
   ])
 }
 
+/**
+ * Sync data from {@link logs} to File on logs folder.
+ * @public
+ */
 let coutFile: number = 1;
 fs.readdir(`${root}/logs`, (err, res) => {
   if (!err) {
@@ -46,6 +78,10 @@ fs.readdir(`${root}/logs`, (err, res) => {
   syncLogFile()
 })
 
+/**
+ * Some logging function to replace default {@link Console.log} with logging file.
+ * @public
+ */
 export default {
   add
 }

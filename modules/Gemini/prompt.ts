@@ -1,10 +1,31 @@
-import type { GenerateContentResult, Part } from "@google/generative-ai";
+/**
+ * @license
+ * Copyright 2025 SGStudio Under Syeif Sultoni Akbar
+ * 
+ * Licensed under GNU General Public License Version 3 (the "License")
+ * For more information on this, see
+ * 
+ *  https://www.gnu.org/licenses/
+ * 
+ * To "modify" a work means to copy from or adapt all or part of the work
+ * in a fashion requiring copyright permission, other than the making of an
+ * exact copy.  The resulting work is called a "modified version" of the
+ * earlier work or a work "based on" the earlier work.
+ */
+
+import type { ChatSession, Content, GenerateContentResult, Part } from "@google/generative-ai";
 import logging from "../logging";
 import model from "./connection";
+import chatHistoryParser from "./chatHistoryParser";
+import type { CharResult } from ".";
 
-const textPrompt = async (prompt: string): Promise<string | boolean> => {
+/**
+ * Generate some standard AI answer from Text Based Prompt.
+ * @public
+ */
+const textPrompt = async (Prompt: string): Promise<string | boolean> => {
   try {
-    const result: GenerateContentResult = await model.generateContent(prompt)
+    const result: GenerateContentResult = await model.generateContent(Prompt)
     return result.response.text()
   } catch (err) {
     logging.add(`${err}`)
@@ -12,11 +33,15 @@ const textPrompt = async (prompt: string): Promise<string | boolean> => {
   }
 }
 
-const imagePrompt = async (prompt: string, imageListLink: string[]): Promise<string | boolean> => {
-  const promptWithImage: (string | Part)[] = []
-
+/**
+ * Generate some standard AI answer from Text & Multiple Image Prompt.
+ * @public
+ */
+const imagePrompt = async (Prompt: string, ImageListLink: string[]): Promise<string | boolean> => {
   try {
-    for (const imageLink of imageListLink) {
+    const promptWithImage: (string | Part)[] = []
+
+    for (const imageLink of ImageListLink) {
       const link: ArrayBuffer = await fetch(imageLink).then((response) => response.arrayBuffer())
       promptWithImage.push({
         inlineData: {
@@ -26,7 +51,7 @@ const imagePrompt = async (prompt: string, imageListLink: string[]): Promise<str
       })
     }
 
-    promptWithImage.push(prompt)
+    promptWithImage.push(Prompt)
 
     const result: GenerateContentResult = await model.generateContent(promptWithImage);
     return result.response.text()
@@ -36,7 +61,67 @@ const imagePrompt = async (prompt: string, imageListLink: string[]): Promise<str
   }
 }
 
+/**
+ * Generate some AI answer from Text Based Prompt with his own Character.
+ * @public
+ */
+const charTextPrompt = async (Prompt: string, ChatHistory: Content[] | null): Promise<CharResult | boolean> => {
+  try {
+    const chatSession: ChatSession = model.startChat({
+      history: chatHistoryParser.toHistory(ChatHistory)
+    })
+    const result: GenerateContentResult = await chatSession.sendMessage(Prompt)
+    return {
+      result: result.response.text(),
+      history: chatHistoryParser.fromHistory(await chatSession.getHistory())
+    }
+  } catch (err) {
+    logging.add(`${err}`)
+    return false
+  }
+}
+
+/**
+ * Generate some AI answer from Text & Multiple Image Prompt with his own Character.
+ * @public
+ */
+const charImagePrompt = async (Prompt: string, ImageListLink: string[], ChatHistory: Content[] | null): Promise<CharResult | boolean> => {
+  try {
+    const promptWithImage: (string | Part)[] = []
+    const chatSession: ChatSession = model.startChat({
+      history: chatHistoryParser.toHistory(ChatHistory)
+    })
+
+    for (const imageLink of ImageListLink) {
+      const link: ArrayBuffer = await fetch(imageLink).then((response) => response.arrayBuffer())
+      promptWithImage.push({
+        inlineData: {
+          data: Buffer.from(link).toString('base64'),
+          mimeType: 'image/jpeg'
+        }
+      })
+    }
+
+    promptWithImage.push(Prompt)
+
+    const result: GenerateContentResult = await chatSession.sendMessage(promptWithImage)
+    return {
+      result: result.response.text(),
+      history: chatHistoryParser.fromHistory(await chatSession.getHistory())
+    }
+  } catch (err) {
+    logging.add(`${err}`)
+    return false
+  }
+}
+
+/**
+ * Some powerfull function to send some prompt to API.
+ * @public
+ */
 export default {
   textPrompt,
-  imagePrompt
+  imagePrompt,
+  charTextPrompt,
+  charImagePrompt
 }

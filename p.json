@@ -1,0 +1,114 @@
+{
+  "response": {
+    "candidates": [
+      {
+        "content": {
+          "parts": [{ "text": "Selamat pagi juga! Apa kabar?\n" }],
+          "role": "model"
+        },
+        "finishReason": "STOP",
+        "avgLogprobs": -0.022957732900977135
+      }
+    ],
+    "usageMetadata": {
+      "promptTokenCount": 6,
+      "candidatesTokenCount": 8,
+      "totalTokenCount": 14
+    },
+    "modelVersion": "gemini-1.5-flash"
+  },
+
+  "a": {
+    "model": "models/gemini-1.5-flash",
+    "params": { "generationConfig": {}, "safetySettings": [] },
+    "_requestOptions": {},
+    "_history": [],
+    "_sendPromise": {},
+    "_apiKey": "AIzaSyAe24Tmvk_NqU5UXlDrF2sQLAaerTLJlvg"
+  },
+
+  "b": {
+    "response": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [{ "text": "Halo Iwan!  Ada yang bisa saya bantu?\n" }],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "avgLogprobs": -0.06050979007374157
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 9,
+        "candidatesTokenCount": 11,
+        "totalTokenCount": 20
+      },
+      "modelVersion": "gemini-1.5-flash"
+    }
+  },
+
+  "c": {
+    "response": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [{ "text": "Nama Anda adalah Iwan.\n" }],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "avgLogprobs": -0.33952287832895917
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 26,
+        "candidatesTokenCount": 6,
+        "totalTokenCount": 32
+      },
+      "modelVersion": "gemini-1.5-flash"
+    }
+  },
+
+  "d": {
+    "model": "models/gemini-1.5-flash",
+    "params": { "generationConfig": {}, "safetySettings": [] },
+    "_requestOptions": {},
+    "_history": [
+      { "role": "user", "parts": [{ "text": "halo, panggil nama saya iwan" }] },
+      {
+        "parts": [{ "text": "Halo Iwan!  Ada yang bisa saya bantu?\n" }],
+        "role": "model"
+      },
+      { "role": "user", "parts": [{ "text": "siapa nama saya" }] },
+      { "parts": [{ "text": "Nama Anda adalah Iwan.\n" }], "role": "model" }
+    ],
+    "_sendPromise": {},
+    "_apiKey": "AIzaSyAe24Tmvk_NqU5UXlDrF2sQLAaerTLJlvg"
+  },
+
+  "e": [
+    { "role": "user", "parts": [{ "text": "halo, panggil nama saya iwan" }] },
+    {
+      "parts": [{ "text": "Halo Iwan!  Ada yang bisa saya bantu?\n" }],
+      "role": "model"
+    },
+    { "role": "user", "parts": [{ "text": "siapa nama saya" }] },
+    { "parts": [{ "text": "Nama Anda adalah Iwan.\n" }], "role": "model" }
+  ],
+
+  "f": [
+    { "role": "user", "parts": [{ "text": "halo, apa kabar" }] },
+    {
+      "parts": [
+        {
+          "text": [
+            "Woyy! Kabar gue? Alhamdulillah, ",
+            "masih seger kayak timun di siang bolong!",
+            " Gimana kabar sahabat gue yang kece badai ini?  Curhat dong, ada apa aja hari ini?  Jangan sungkan-sungkan, kita kan udah kayak kacang satu kulit! 😉\n"
+          ]
+        }
+      ],
+      "role": "model"
+    }
+  ]
+}

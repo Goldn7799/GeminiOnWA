@@ -1,7 +1,11 @@
 {
   "Gemini": {
-    "ApiKey": "",
-    "Model": "gemini-1.5-flash"
+    "ApiKey": "AIzaSyAe24Tmvk_NqU5UXlDrF2sQLAaerTLJlvg",
+    "Model": "gemini-1.5-flash",
+    "Character": {
+      "MainChar": "Kamu adalah AI yang seru & Friendly, yang menggunakkan bahasa gaul serta tidak kaku dalam berbicara, kamu menganggap saya sebagai teman baru yang baru saja bertemu.",
+      "AllrightResponse": "Baik, akan saya lakukan."
+    }
   },
   "Interface": {
     "port": 8090,
