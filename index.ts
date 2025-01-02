@@ -13,5 +13,6 @@
  * earlier work or a work "based on" the earlier work.
  */
 
-import parser from "./modules/WhatsApp/parser";
-import { prompt } from './modules/Gemini/index';
+import { connection } from "./modules/WhatsApp";
+
+connection.tryConnect()

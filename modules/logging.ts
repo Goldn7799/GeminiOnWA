@@ -67,6 +67,7 @@ fs.readdir(`${root}/logs`, (err, res) => {
       }
       fs.writeFile(`${root}/logs/${logFileName}.txt`, theLogs, 'utf-8', () => {
         setTimeout(() => {
+          currentDay = new Date().getDate()
           if (currentDay !== new Date().getDate()) {
             UpdateFileName()
           };

@@ -13,12 +13,23 @@
  * earlier work or a work "based on" the earlier work.
  */
 
-import connection from "./connection";
-
 /**
- * Gateway WhatsApp and Server
+ * Convert Buffer to Array Buffer for Gemini Support
  * @public
  */
-export {
-  connection
+function toArrayBuffer(buffer: Buffer): ArrayBuffer {
+  const arrayBuffer = new ArrayBuffer(buffer.length);
+  const view = new Uint8Array(arrayBuffer);
+  for (let i = 0; i < buffer.length; ++i) {
+    view[i] = buffer[i];
+  }
+  return arrayBuffer;
+}
+
+/**
+ * Usefull Tools
+ * @public
+ */
+export default {
+  toArrayBuffer
 }

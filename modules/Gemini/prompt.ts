@@ -23,13 +23,13 @@ import type { CharResult } from ".";
  * Generate some standard AI answer from Text Based Prompt.
  * @public
  */
-const textPrompt = async (Prompt: string): Promise<string | boolean> => {
+const textPrompt = async (Prompt: string): Promise<string | null> => {
   try {
     const result: GenerateContentResult = await model.generateContent(Prompt)
     return result.response.text()
   } catch (err) {
     logging.add(`${err}`)
-    return false
+    return null
   }
 }
 
@@ -37,27 +37,33 @@ const textPrompt = async (Prompt: string): Promise<string | boolean> => {
  * Generate some standard AI answer from Text & Multiple Image Prompt.
  * @public
  */
-const imagePrompt = async (Prompt: string, ImageListLink: string[]): Promise<string | boolean> => {
+const imagePrompt = async (Prompt: string, ImageListBuffer: ArrayBuffer): Promise<string | null> => {
   try {
     const promptWithImage: (string | Part)[] = []
 
-    for (const imageLink of ImageListLink) {
-      const link: ArrayBuffer = await fetch(imageLink).then((response) => response.arrayBuffer())
-      promptWithImage.push({
-        inlineData: {
-          data: Buffer.from(link).toString('base64'),
-          mimeType: 'image/jpeg'
-        }
-      })
-    }
+    // for (const imageLink of ImageListLink) {
+    //   const link: ArrayBuffer = await fetch(imageLink).then((response) => response.arrayBuffer())
+    //   promptWithImage.push({
+    //     inlineData: {
+    //       data: Buffer.from(link).toString('base64'),
+    //       mimeType: 'image/jpeg'
+    //     }
+    //   })
+    // }
 
+    promptWithImage.push({
+      inlineData: {
+        data: Buffer.from(ImageListBuffer).toString('base64'),
+        mimeType: 'image/jpeg'
+      }
+    })
     promptWithImage.push(Prompt)
 
     const result: GenerateContentResult = await model.generateContent(promptWithImage);
     return result.response.text()
   } catch (err) {
     logging.add(`${err}`)
-    return false
+    return null
   }
 }
 
@@ -65,7 +71,7 @@ const imagePrompt = async (Prompt: string, ImageListLink: string[]): Promise<str
  * Generate some AI answer from Text Based Prompt with his own Character.
  * @public
  */
-const charTextPrompt = async (Prompt: string, ChatHistory: Content[] | null): Promise<CharResult | boolean> => {
+const charTextPrompt = async (Prompt: string, ChatHistory: Content[] | null): Promise<CharResult | null> => {
   try {
     const chatSession: ChatSession = model.startChat({
       history: chatHistoryParser.toHistory(ChatHistory)
@@ -77,7 +83,7 @@ const charTextPrompt = async (Prompt: string, ChatHistory: Content[] | null): Pr
     }
   } catch (err) {
     logging.add(`${err}`)
-    return false
+    return null
   }
 }
 
@@ -85,23 +91,29 @@ const charTextPrompt = async (Prompt: string, ChatHistory: Content[] | null): Pr
  * Generate some AI answer from Text & Multiple Image Prompt with his own Character.
  * @public
  */
-const charImagePrompt = async (Prompt: string, ImageListLink: string[], ChatHistory: Content[] | null): Promise<CharResult | boolean> => {
+const charImagePrompt = async (Prompt: string, ImageListBuffer: ArrayBuffer, ChatHistory: Content[] | null): Promise<CharResult | null> => {
   try {
     const promptWithImage: (string | Part)[] = []
     const chatSession: ChatSession = model.startChat({
       history: chatHistoryParser.toHistory(ChatHistory)
     })
 
-    for (const imageLink of ImageListLink) {
-      const link: ArrayBuffer = await fetch(imageLink).then((response) => response.arrayBuffer())
-      promptWithImage.push({
-        inlineData: {
-          data: Buffer.from(link).toString('base64'),
-          mimeType: 'image/jpeg'
-        }
-      })
-    }
+    // for (const imageLink of ImageListLink) {
+    //   const link: ArrayBuffer = await fetch(imageLink).then((response) => response.arrayBuffer())
+    //   promptWithImage.push({
+    //     inlineData: {
+    //       data: Buffer.from(link).toString('base64'),
+    //       mimeType: 'image/jpeg'
+    //     }
+    //   })
+    // }
 
+    promptWithImage.push({
+      inlineData: {
+        data: Buffer.from(ImageListBuffer).toString('base64'),
+        mimeType: 'image/jpeg'
+      }
+    })
     promptWithImage.push(Prompt)
 
     const result: GenerateContentResult = await chatSession.sendMessage(promptWithImage)
@@ -111,7 +123,7 @@ const charImagePrompt = async (Prompt: string, ImageListLink: string[], ChatHist
     }
   } catch (err) {
     logging.add(`${err}`)
-    return false
+    return null
   }
 }
 
