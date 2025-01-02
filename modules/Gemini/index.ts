@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import Config from '../../config.json'
 
-const genAI: any = new GoogleGenerativeAI("AIzaSyB7u6aTxnQhWr0XCFVMNm5p_1bh8zqOtE8")
+const genAI: any = new GoogleGenerativeAI(Config.Gemini.ApiKey)
 const model: any = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
 
 const prompt: any = "Sebutkan 2 hewan pemakan daging beserta foto nya"
