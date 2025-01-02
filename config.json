@@ -1,7 +1,8 @@
 {
   "Gemini": {
-    "ApiKey": "AIzaSyCtK5gXtQzfA-czz1wNW0YzJRv8Mhe2YU4",
+    "ApiKey": "",
     "Model": "gemini-1.5-flash",
+    "GroundingTreshold": 0.8,
     "Character": {
       "MainChar": "Kamu adalah AI yang seru & Friendly, yang menggunakkan bahasa gaul serta tidak kaku dalam berbicara, tetapi bukan tipe orang yang long text dan banyak bicara, namun tetap seru, kamu menganggap saya sebagai teman baru yang baru saja bertemu.",
       "AllrightResponse": "Baik, akan saya lakukan."

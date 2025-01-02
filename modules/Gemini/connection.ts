@@ -13,7 +13,7 @@
  * earlier work or a work "based on" the earlier work.
  */
 
-import { GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
+import { DynamicRetrievalMode, GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
 import Config from '../../config.json'
 
 /**
@@ -23,9 +23,21 @@ import Config from '../../config.json'
 const genAI: GoogleGenerativeAI = new GoogleGenerativeAI(Config.Gemini.ApiKey)
 
 /**
- * AI Model with APIKEY included from the {@link Config}.
+ * AI Model with APIKEY included from the {@link Config} and set GoogleSearchRetrieval or Grounding.
  * @public
  */
-const model:GenerativeModel = genAI.getGenerativeModel({ model: Config.Gemini.Model })
+const model:GenerativeModel = genAI.getGenerativeModel({
+  model: Config.Gemini.Model,
+  tools: [
+    {
+      googleSearchRetrieval: {
+        dynamicRetrievalConfig: {
+          mode: DynamicRetrievalMode.MODE_DYNAMIC,
+          dynamicThreshold: Config.Gemini.GroundingTreshold
+        }
+      }
+    }
+  ]
+})
 
 export default model
