@@ -1,0 +1,9 @@
+{
+  "Gemini": {
+    "ApiKey": ""
+  },
+  "Interface": {
+    "port": 8090,
+    "UpLimit": "100m"
+  }
+}
