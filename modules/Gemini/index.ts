@@ -16,6 +16,10 @@
 import type { Content } from "@google/generative-ai";
 import prompt from "./prompt";
 
+/**
+ * Gemini AI Modules
+ * @public
+ */
 export {
   prompt
 }
