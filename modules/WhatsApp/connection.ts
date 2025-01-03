@@ -70,7 +70,7 @@ const tryConnect = async () => {
     /**
      * Make Log for Development
      */
-    console.log(`> ${(msg.key.fromMe) ? '[ME] ' : '\n'}${msg.key.remoteJid} => ${(msg.message?.conversation) ? msg.message?.conversation : msg.message?.extendedTextMessage?.text}`)
+    console.log(`${(msg.key.fromMe) ? '> [ME] ' : '\n> '}${msg.key.remoteJid} => ${(msg.message?.conversation) ? msg.message?.conversation : msg.message?.extendedTextMessage?.text}`)
     fs.writeFileSync(`${process.cwd()}/DataStore/temp.json`, JSON.stringify(m))
 
     /**
