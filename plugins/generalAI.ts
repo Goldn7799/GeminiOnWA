@@ -42,7 +42,11 @@ const generalAI = async (sock: WASocket, msg: WAMessage) => {
       /**
        * Check if the chat is suitable for a response.
        */
-      if (session.includes('@s.whatsapp.net') || ((session.includes('@g.us') && (msg.message?.extendedTextMessage?.contextInfo?.mentionedJid?.includes(`${sock.user?.id.split(':')[0]}@s.whatsapp.net`))) || caption.includes(`${sock.user?.id.split(':')[0]}`))) {
+      const pcCheck = (): boolean => session.includes('@s.whatsapp.net')
+      const gcCheck = (): boolean => session.includes('@g.us')
+      const tagsCheck = (): boolean => ((msg.message?.extendedTextMessage?.contextInfo?.mentionedJid?.includes(`${sock.user?.id.split(':')[0]}@s.whatsapp.net`))) || caption.includes(`${sock.user?.id.split(':')[0]}`) 
+      const replyCheck = (): boolean | undefined => (msg.message?.extendedTextMessage?.contextInfo?.quotedMessage) ? (msg.message.extendedTextMessage.contextInfo.participant?.includes(`${sock.user?.id.split(':')[0]}@s.whatsapp.net`)) : false
+      if (pcCheck() || ( gcCheck() && (tagsCheck() || replyCheck()) )) {
         /**
          * Indicator if chat being responded.
          */
