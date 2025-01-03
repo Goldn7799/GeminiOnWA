@@ -19,19 +19,16 @@ import logging from '../logging'
 
 /**
  * Directory of Where the Data stored
- * @public
  */
 const root: string = `${process.cwd()}/DataStore`
 
 /**
  * Temporary Chat History before saved to file
- * @public
  */
 let chatHistory: Record<string, Content[]> = {}
 
 /**
  * Initial and Read saved DB
- * @public
  */
 fs.mkdir(root, () => {
   fs.readFile(`${root}/chat-history.json`, 'utf-8', (err, res) => {
@@ -44,13 +41,13 @@ fs.mkdir(root, () => {
       })
     } else {
       chatHistory = JSON.parse(res)
+      SYNC()
     }
   })
 })
 
 /**
  * SYNC Temporary and DB
- * @public
  */
 const SYNC = () => {
   fs.writeFile(`${root}/chat-history.json`, JSON.stringify(chatHistory), (err) => {

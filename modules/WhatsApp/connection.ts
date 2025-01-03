@@ -13,13 +13,11 @@
  * earlier work or a work "based on" the earlier work.
  */
 
-import makeWASocket, { Browsers, DisconnectReason, downloadMediaMessage, useMultiFileAuthState, type WASocket } from "@whiskeysockets/baileys";
+import makeWASocket, { Browsers, DisconnectReason, useMultiFileAuthState, type WASocket } from "@whiskeysockets/baileys";
 import { Boom } from "@hapi/boom";
 import logging from "../logging";
-import { prompt } from "../Gemini";
-import smallDB from "./smallDB";
-import parser from "./parser";
-import utility from "./utility";
+import fs from 'fs'
+import ModularCmd from "../ModularCmd";
 
 /**
  * Try To Connect to WhatsApp services using Baileys
@@ -28,7 +26,6 @@ import utility from "./utility";
 const tryConnect = async () => {
   /**
    * Basic Initial for Baileys
-   * @public
    */
   const { state, saveCreds } = (await useMultiFileAuthState('./DataStore/WhatsAppState'))
   const sock: WASocket = makeWASocket({
@@ -39,14 +36,12 @@ const tryConnect = async () => {
 
   /**
    * Save WhatsApp Connection State
-   * @public
    */
   sock.ev.on('creds.update', saveCreds)
 
   /**
    * Check if Whatsapp Connected, Disconnected and Connecting.
    * Auto Reconnect Feature.
-   * @public
    */
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect } = update
@@ -68,57 +63,20 @@ const tryConnect = async () => {
 
   /**
    * Reciving A Message from WhatsApp
-   * @public
    */
   sock.ev.on('messages.upsert', async (m) => {
     const msg = m.messages[0];
-    console.log(`${(msg.key.fromMe) ? '[AI] ' : ''}${msg.key.remoteJid} => ${msg.message?.conversation}`)
-    if (!msg.key.fromMe) {
-      const session = msg.key.remoteJid!
-      const thisHistory = (smallDB.check(session)) ? smallDB.get(session) : null
-      
-      /**
-     * Private Chat Reply Function
-     * @public
+
+    /**
+     * Make Log for Development
      */
-      if (session.includes('@s.whatsapp.net')) {
+    console.log(`\n${(msg.key.fromMe) ? '\n[AI] ' : ''}${msg.key.remoteJid} => ${(msg.message?.conversation) ? msg.message?.conversation : msg.message?.extendedTextMessage?.text}`)
+    fs.writeFileSync(`${process.cwd()}/DataStore/temp.json`, JSON.stringify(m))
 
-        /**
-         * Image & Sticker Response
-         * @public
-         */
-        if (msg.message?.imageMessage || msg.message?.stickerMessage) {
-          const thisMedia = await downloadMediaMessage(msg, 'buffer', {})
-
-          await sock.readMessages([msg.key])
-          await sock.sendPresenceUpdate('composing', session)
-
-          const aiRes = await prompt.charImagePrompt(`${msg.message?.conversation}`, utility.toArrayBuffer(thisMedia), thisHistory)
-
-          if (aiRes) {
-            smallDB.update(session, aiRes?.history)
-            await sock.sendMessage(session, { text: parser(`${aiRes?.result}`) })
-            await sock.sendPresenceUpdate('available', session)
-          }
-        }
-        /**
-         * Default Text Response
-         * @public
-         */
-        else {
-          await sock.readMessages([msg.key])
-          await sock.sendPresenceUpdate('composing', session)
-
-          const aiRes = await prompt.charTextPrompt(`${msg.message?.conversation}`, thisHistory)
-
-        if (aiRes) {
-          smallDB.update(session, aiRes?.history)
-          await sock.sendMessage(session, { text: parser(`${aiRes?.result}`) })
-          await sock.sendPresenceUpdate('available', session)
-        };
-        }
-      };
-    }
+    /**
+     * Check Conversation
+     */
+    ModularCmd.check(sock, msg)
   })
 }
 

@@ -13,8 +13,12 @@
  * earlier work or a work "based on" the earlier work.
  */
 
-import fs from 'fs'
+import check from "./check";
 
-// Weght: Number (A Priority)
-const root: string = process.cwd()
-fs.mkdir(`${root}/plugins`, ()=>{})
+/**
+ * Make WhatsappReply Function more easy to manage & maintain
+ * @public
+ */
+export default {
+  check
+}

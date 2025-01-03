@@ -12,20 +12,3 @@
  * exact copy.  The resulting work is called a "modified version" of the
  * earlier work or a work "based on" the earlier work.
  */
-
-import { GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
-import Config from '../../config.json'
-
-/**
- * Default Initial for {@link GoogleGenerativeAI} and set APIKEY from {@link Config}.
- * @public
- */
-const genAI: GoogleGenerativeAI = new GoogleGenerativeAI(Config.Gemini.ApiKey)
-
-/**
- * AI Model with APIKEY included from the {@link Config}.
- * @public
- */
-const model:GenerativeModel = genAI.getGenerativeModel({ model: Config.Gemini.Model })
-
-export default model

@@ -37,7 +37,7 @@ const textPrompt = async (Prompt: string): Promise<string | null> => {
  * Generate some standard AI answer from Text & Multiple Image Prompt.
  * @public
  */
-const imagePrompt = async (Prompt: string, ImageListBuffer: ArrayBuffer): Promise<string | null> => {
+const imagePrompt = async (Prompt: string, ImageListBuffer: ArrayBuffer[]): Promise<string | null> => {
   try {
     const promptWithImage: (string | Part)[] = []
 
@@ -51,12 +51,14 @@ const imagePrompt = async (Prompt: string, ImageListBuffer: ArrayBuffer): Promis
     //   })
     // }
 
-    promptWithImage.push({
-      inlineData: {
-        data: Buffer.from(ImageListBuffer).toString('base64'),
-        mimeType: 'image/jpeg'
-      }
-    })
+    for (const imageBuffer of ImageListBuffer) {
+      promptWithImage.push({
+        inlineData: {
+          data: Buffer.from(imageBuffer).toString('base64'),
+          mimeType: 'image/jpeg'
+        }
+      })
+    }
     promptWithImage.push(Prompt)
 
     const result: GenerateContentResult = await model.generateContent(promptWithImage);
@@ -91,7 +93,7 @@ const charTextPrompt = async (Prompt: string, ChatHistory: Content[] | null): Pr
  * Generate some AI answer from Text & Multiple Image Prompt with his own Character.
  * @public
  */
-const charImagePrompt = async (Prompt: string, ImageListBuffer: ArrayBuffer, ChatHistory: Content[] | null): Promise<CharResult | null> => {
+const charImagePrompt = async (Prompt: string, ImageListBuffer: ArrayBuffer[], ChatHistory: Content[] | null): Promise<CharResult | null> => {
   try {
     const promptWithImage: (string | Part)[] = []
     const chatSession: ChatSession = model.startChat({
@@ -108,12 +110,15 @@ const charImagePrompt = async (Prompt: string, ImageListBuffer: ArrayBuffer, Cha
     //   })
     // }
 
-    promptWithImage.push({
-      inlineData: {
-        data: Buffer.from(ImageListBuffer).toString('base64'),
-        mimeType: 'image/jpeg'
-      }
-    })
+    for (const imageBuffer of ImageListBuffer) {
+      promptWithImage.push({
+        inlineData: {
+          data: Buffer.from(imageBuffer).toString('base64'),
+          mimeType: 'image/jpeg'
+        }
+      })
+    }
+
     promptWithImage.push(Prompt)
 
     const result: GenerateContentResult = await chatSession.sendMessage(promptWithImage)

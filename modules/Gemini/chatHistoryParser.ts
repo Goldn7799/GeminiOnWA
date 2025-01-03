@@ -30,14 +30,14 @@ const toHistory = (UserHistory: Content[] | null): Content[] => {
 }
 
 /**
- * Remove A Character Prompt from function {@link toHistory} on Chat History({@link Content}) to save Database.
+ * Remove A Character Prompt from function {@link toHistory} on Chat History({@link Content}) and InlineData to save Database Space.
  * @public
  */
 const fromHistory = (History: Content[]): Content[] => {
   const thisHistory: Content[] = History;
   thisHistory.shift();
   thisHistory.shift();
-  return thisHistory
+  return thisHistory.filter((history) => history.parts.length <= 1);
 }
 
 /**

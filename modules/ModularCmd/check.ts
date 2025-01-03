@@ -13,19 +13,15 @@
  * earlier work or a work "based on" the earlier work.
  */
 
-import { GenerativeModel, GoogleGenerativeAI } from "@google/generative-ai";
-import Config from '../../config.json'
+import type { WAMessage, WASocket } from "@whiskeysockets/baileys"
+import generalAI from "../../plugins/generalAI"
 
 /**
- * Default Initial for {@link GoogleGenerativeAI} and set APIKEY from {@link Config}.
+ * Check Conversation to system, and reply it if avaiable
  * @public
  */
-const genAI: GoogleGenerativeAI = new GoogleGenerativeAI(Config.Gemini.ApiKey)
+const check = (sock: WASocket, msg: WAMessage) => {
+  generalAI(sock, msg)
+}
 
-/**
- * AI Model with APIKEY included from the {@link Config}.
- * @public
- */
-const model:GenerativeModel = genAI.getGenerativeModel({ model: Config.Gemini.Model })
-
-export default model
+export default check
