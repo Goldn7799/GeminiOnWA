@@ -13,7 +13,7 @@
  * earlier work or a work "based on" the earlier work.
  */
 
-import { downloadMediaMessage, type WAMessage, type WASocket } from "@whiskeysockets/baileys";
+import { downloadMediaMessage, getContentType, type WAMessage, type WASocket } from "@whiskeysockets/baileys";
 import { prompt } from "../modules/Gemini";
 import smallDB from "../modules/WhatsApp/smallDB";
 import parser from "../modules/WhatsApp/parser";
@@ -31,11 +31,18 @@ const generalAI = async (sock: WASocket, msg: WAMessage) => {
        * This is a Chat Session Key
        */
       const session = msg.key.remoteJid!
+
+      /**
+       * Additional check for tag on Captioned Image on Grub
+       */
+      const msgType = getContentType(msg.message)
+      const rawCaption = JSON.parse(JSON.stringify(msg.message[`${(msgType) ? msgType : 'imageMessage'}`]))
+      const caption = (rawCaption?.caption) ? `${rawCaption?.caption}` : ''
       
       /**
        * Check if the chat is suitable for a response 
        */
-      if (session.includes('@s.whatsapp.net') || (session.includes('@g.us') && msg.message?.extendedTextMessage?.contextInfo?.mentionedJid?.includes(`${sock.user?.id.split(':')[0]}@s.whatsapp.net`))) {
+      if (session.includes('@s.whatsapp.net') || ((session.includes('@g.us') && (msg.message?.extendedTextMessage?.contextInfo?.mentionedJid?.includes(`${sock.user?.id.split(':')[0]}@s.whatsapp.net`))) || caption.includes(`${sock.user?.id.split(':')[0]}`))) {
         /**
          * Indicator if chat being responded 
          */
@@ -46,14 +53,25 @@ const generalAI = async (sock: WASocket, msg: WAMessage) => {
         const thisMessageText = ((msg.message?.conversation) ? msg.message.conversation : msg.message.extendedTextMessage?.text)?.replaceAll(`@${sock.user?.id.split(':')[0]}`, '')
         const replyMessage = msg.message.extendedTextMessage?.contextInfo?.quotedMessage
         const replyMessageText = replyMessage?.conversation?.replaceAll(`@${sock.user?.id.split(':')[0]}`, '')
+
+        /**
+         * This List to collect Image Buffer From 2 Source
+         */
+        const imageList: ArrayBuffer[] = []
+        const rmsg: WAMessage = {
+          key: msg.key,
+          message: replyMessage
+        }
         const thisMedia = (msg.message?.imageMessage || msg.message?.stickerMessage) ? await downloadMediaMessage(msg, 'buffer', {}) : null
-        // const replyMessageMedia = (replyMessage?.imageMessage || replyMessage?.stickerMessage) ? await downloadMediaMessage(messageParser(sock, msg), 'buffer', {}) : null
-  
+        const replyMedia = (replyMessage?.imageMessage || replyMessage?.stickerMessage) ? await downloadMediaMessage(rmsg, 'buffer', {}) : null
+        if (thisMedia) imageList.push(utility.toArrayBuffer(thisMedia));
+        if (replyMedia) imageList.push(utility.toArrayBuffer(replyMedia));
+
         /**
          * Choose wich one AI Prompt to be use 
          */
-        const aiRes = (thisMedia)
-        ? await prompt.charImagePrompt(`${(replyMessageText) ? `([Reply From Message] "${replyMessageText}")` : ''}${thisMessageText}`, [utility.toArrayBuffer(thisMedia)], thisHistory)
+        const aiRes = (imageList)
+        ? await prompt.charImagePrompt(`${(replyMessageText) ? `([Reply From Message]${(replyMedia) ? `[First Image is Reply From Message]` : ''} "${replyMessageText}")` : ''}${thisMessageText}`, imageList, thisHistory)
         : await prompt.charTextPrompt(`${(replyMessageText) ? `([Reply From Message] "${replyMessageText}")` : ''}${thisMessageText}`, thisHistory)
   
         /**
