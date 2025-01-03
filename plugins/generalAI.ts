@@ -43,8 +43,9 @@ const generalAI = async (sock: WASocket, msg: WAMessage) => {
         await sock.sendPresenceUpdate('composing', session)
         
         const thisHistory = (smallDB.check(session)) ? smallDB.get(session) : null
-        const thisMessageText = (msg.message?.conversation) ? msg.message.conversation : msg.message.extendedTextMessage?.text
+        const thisMessageText = ((msg.message?.conversation) ? msg.message.conversation : msg.message.extendedTextMessage?.text)?.replaceAll(`@${sock.user?.id.split(':')[0]}`, '')
         const replyMessage = msg.message.extendedTextMessage?.contextInfo?.quotedMessage
+        const replyMessageText = replyMessage?.conversation?.replaceAll(`@${sock.user?.id.split(':')[0]}`, '')
         const thisMedia = (msg.message?.imageMessage || msg.message?.stickerMessage) ? await downloadMediaMessage(msg, 'buffer', {}) : null
         // const replyMessageMedia = (replyMessage?.imageMessage || replyMessage?.stickerMessage) ? await downloadMediaMessage(messageParser(sock, msg), 'buffer', {}) : null
   
@@ -52,8 +53,8 @@ const generalAI = async (sock: WASocket, msg: WAMessage) => {
          * Choose wich one AI Prompt to be use 
          */
         const aiRes = (thisMedia)
-        ? await prompt.charImagePrompt(`${(replyMessage?.conversation) ? `([Reply From Message] "${replyMessage?.conversation}")` : ''}${thisMessageText}`, [utility.toArrayBuffer(thisMedia)], thisHistory)
-        : await prompt.charTextPrompt(`${(replyMessage?.conversation) ? `([Reply From Message] "${replyMessage?.conversation}")` : ''}${thisMessageText}`, thisHistory)
+        ? await prompt.charImagePrompt(`${(replyMessageText) ? `([Reply From Message] "${replyMessageText}")` : ''}${thisMessageText}`, [utility.toArrayBuffer(thisMedia)], thisHistory)
+        : await prompt.charTextPrompt(`${(replyMessageText) ? `([Reply From Message] "${replyMessageText}")` : ''}${thisMessageText}`, thisHistory)
   
         /**
          * If response Avaiable, send it to user 

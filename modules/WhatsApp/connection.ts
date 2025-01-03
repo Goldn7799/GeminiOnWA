@@ -13,7 +13,7 @@
  * earlier work or a work "based on" the earlier work.
  */
 
-import makeWASocket, { Browsers, DisconnectReason, useMultiFileAuthState, type WASocket } from "@whiskeysockets/baileys";
+import makeWASocket, { Browsers, DisconnectReason, getContentType, useMultiFileAuthState, type WASocket } from "@whiskeysockets/baileys";
 import { Boom } from "@hapi/boom";
 import logging from "../logging";
 import fs from 'fs'
@@ -70,7 +70,7 @@ const tryConnect = async () => {
     /**
      * Make Log for Development
      */
-    console.log(`${(msg.key.fromMe) ? '> [ME] ' : '\n> '}${msg.key.remoteJid} => ${(msg.message?.conversation) ? msg.message?.conversation : msg.message?.extendedTextMessage?.text}`)
+    console.log(`${(msg.key.fromMe) ? '> [ME] ' : '\n> '}${msg.key.remoteJid} ${msg.participant || msg.key.participant} => ${(getContentType((msg.message) ? msg.message : undefined)) ? `[ -${getContentType((msg.message) ? msg.message : undefined)?.toUpperCase()}- ] ` : ''}${(msg.message?.conversation) ? msg.message?.conversation : (msg.message?.extendedTextMessage?.text) ? msg.message?.extendedTextMessage?.text : ''}`)
     fs.writeFileSync(`${process.cwd()}/DataStore/temp.json`, JSON.stringify(m))
 
     /**
