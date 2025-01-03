@@ -18,17 +18,17 @@ import fs from 'fs'
 import logging from '../logging'
 
 /**
- * Directory of Where the Data stored
+ * Directory of Where the Data stored.
  */
 const root: string = `${process.cwd()}/DataStore`
 
 /**
- * Temporary Chat History before saved to file
+ * Temporary Chat History before saved to file.
  */
 let chatHistory: Record<string, Content[]> = {}
 
 /**
- * Initial and Read saved DB
+ * Initial and Read saved DB.
  */
 fs.mkdir(root, () => {
   fs.readFile(`${root}/chat-history.json`, 'utf-8', (err, res) => {
@@ -47,7 +47,7 @@ fs.mkdir(root, () => {
 })
 
 /**
- * SYNC Temporary and DB
+ * SYNC Temporary and DB.
  */
 const SYNC = () => {
   fs.writeFile(`${root}/chat-history.json`, JSON.stringify(chatHistory), (err) => {
@@ -61,7 +61,7 @@ const SYNC = () => {
 }
 
 /**
- * Update Chat History Data
+ * Update Chat History Data.
  * @public
  */
 const update = (key: string, data: Content[]) => {
@@ -69,7 +69,7 @@ const update = (key: string, data: Content[]) => {
 }
 
 /**
- * Get saved Chat History
+ * Get saved Chat History.
  * @public
  */
 const get = (key: string): Content[] | null => {
@@ -77,7 +77,7 @@ const get = (key: string): Content[] | null => {
 }
 
 /**
- * Check if Chat History is Avaiable or Not
+ * Check if Chat History is Avaiable or Not.
  * @public
  */
 const check = (key: string): boolean => {
@@ -85,7 +85,7 @@ const check = (key: string): boolean => {
 }
 
 /**
- * Small DB to store some little data and lightweight
+ * Small DB to store some little data and lightweight.
  * @public
  */
 export default {

@@ -16,35 +16,35 @@
 import { downloadMediaMessage, getContentType, type WAMessage, type WASocket } from "@whiskeysockets/baileys";
 import { prompt } from "../modules/Gemini";
 import smallDB from "../modules/WhatsApp/smallDB";
-import parser from "../modules/WhatsApp/parser";
+import geminiParser from "../modules/WhatsApp/geminiParser";
 import utility from "../modules/WhatsApp/utility";
 import logging from "../modules/logging";
 
 /**
- * Default WhatsApp Response from AI({@link prompt})
+ * Default WhatsApp Response from AI({@link prompt}).
  * @public
  */
 const generalAI = async (sock: WASocket, msg: WAMessage) => {
   try {
     if (!msg.key.fromMe && msg.message) {
       /**
-       * This is a Chat Session Key
+       * This is a Chat Session Key.
        */
       const session = msg.key.remoteJid!
 
       /**
-       * Additional check for tag on Captioned Image on Grub
+       * Additional check for tag on Captioned Image on Grub.
        */
       const msgType = getContentType(msg.message)
       const rawCaption = JSON.parse(JSON.stringify(msg.message[`${(msgType) ? msgType : 'imageMessage'}`]))
       const caption = (rawCaption?.caption) ? `${rawCaption?.caption}` : ''
       
       /**
-       * Check if the chat is suitable for a response 
+       * Check if the chat is suitable for a response.
        */
       if (session.includes('@s.whatsapp.net') || ((session.includes('@g.us') && (msg.message?.extendedTextMessage?.contextInfo?.mentionedJid?.includes(`${sock.user?.id.split(':')[0]}@s.whatsapp.net`))) || caption.includes(`${sock.user?.id.split(':')[0]}`))) {
         /**
-         * Indicator if chat being responded 
+         * Indicator if chat being responded.
          */
         await sock.readMessages([msg.key])
         await sock.sendPresenceUpdate('composing', session)
@@ -55,7 +55,7 @@ const generalAI = async (sock: WASocket, msg: WAMessage) => {
         const replyMessageText = replyMessage?.conversation?.replaceAll(`@${sock.user?.id.split(':')[0]}`, '')
 
         /**
-         * This List to collect Image Buffer From 2 Source
+         * This List to collect Image Buffer From 2 Source.
          */
         const imageList: ArrayBuffer[] = []
         const rmsg: WAMessage = {
@@ -68,18 +68,18 @@ const generalAI = async (sock: WASocket, msg: WAMessage) => {
         if (replyMedia) imageList.push(utility.toArrayBuffer(replyMedia));
 
         /**
-         * Choose wich one AI Prompt to be use 
+         * Choose wich one AI Prompt to be use.
          */
         const aiRes = (imageList)
         ? await prompt.charImagePrompt(`${(replyMessageText) ? `([Reply From Message]${(replyMedia) ? `[First Image is Reply From Message]` : ''} "${replyMessageText}")` : ''}${thisMessageText}`, imageList, thisHistory)
         : await prompt.charTextPrompt(`${(replyMessageText) ? `([Reply From Message] "${replyMessageText}")` : ''}${thisMessageText}`, thisHistory)
   
         /**
-         * If response Avaiable, send it to user 
+         * If response Avaiable, send it to user.
          */
         if (aiRes) {
           smallDB.update(session, aiRes?.history)
-          await sock.sendMessage(session, { text: parser(`${aiRes?.result}`) }, { quoted: msg })
+          await sock.sendMessage(session, { text: geminiParser(`${aiRes?.result}`) }, { quoted: msg })
           await sock.sendPresenceUpdate('available', session)
         }
       };

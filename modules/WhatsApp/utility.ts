@@ -14,7 +14,7 @@
  */
 
 /**
- * Convert Buffer to Array Buffer for Gemini Support
+ * Convert Buffer to Array Buffer for Gemini Support.
  * @public
  */
 function toArrayBuffer(buffer: Buffer): ArrayBuffer {

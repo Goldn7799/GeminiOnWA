@@ -16,7 +16,7 @@
 import connection from "./connection";
 
 /**
- * Gateway WhatsApp and Server
+ * Gateway WhatsApp and Server.
  * @public
  */
 export {

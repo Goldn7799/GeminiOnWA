@@ -16,7 +16,7 @@
 import check from "./check";
 
 /**
- * Make WhatsappReply Function more easy to manage & maintain
+ * Make WhatsappReply Function more easy to manage & maintain.
  * @public
  */
 export default {

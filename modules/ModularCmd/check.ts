@@ -15,13 +15,15 @@
 
 import type { WAMessage, WASocket } from "@whiskeysockets/baileys"
 import generalAI from "../../plugins/generalAI"
+import statusAutoRead from "../../plugins/statusAutoRead"
 
 /**
- * Check Conversation to system, and reply it if avaiable
+ * Check Conversation to system, and reply it if avaiable.
  * @public
  */
-const check = (sock: WASocket, msg: WAMessage) => {
-  generalAI(sock, msg)
+const check = async (sock: WASocket, msg: WAMessage) => {
+  await generalAI(sock, msg)
+  await statusAutoRead(sock, msg)
 }
 
 export default check

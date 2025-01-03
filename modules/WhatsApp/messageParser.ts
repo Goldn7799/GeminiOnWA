@@ -13,14 +13,16 @@
  * earlier work or a work "based on" the earlier work.
  */
 
+import type { WAMessage, WASocket } from "@whiskeysockets/baileys";
+
 /**
- * Parse Text Properties from Gemini Model to WhatsApp Text Properties.
+ * Parse a WAMessage for easy development
  * @public
  */
-const parser = (text: string) => {
-  let parsedText: string = text.replaceAll(/\*\*(.*)\*\*/g, "*$1*")
-  parsedText = parsedText.replaceAll(/\* (.*)/g, "- $1")
-  return parsedText
+const messageParser = (sock: WASocket, msg: WAMessage) => {
+  console.log('aik')
+  throw sock
+  throw msg
 }
 
-export default parser
+export default messageParser

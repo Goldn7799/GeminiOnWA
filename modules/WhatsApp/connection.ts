@@ -20,12 +20,12 @@ import fs from 'fs'
 import ModularCmd from "../ModularCmd";
 
 /**
- * Try To Connect to WhatsApp services using Baileys
+ * Try To Connect to WhatsApp services using Baileys.
  * @public
  */
 const tryConnect = async () => {
   /**
-   * Basic Initial for Baileys
+   * Basic Initial for Baileys.
    */
   const { state, saveCreds } = (await useMultiFileAuthState('./DataStore/WhatsAppState'))
   const sock: WASocket = makeWASocket({
@@ -35,7 +35,7 @@ const tryConnect = async () => {
   })
 
   /**
-   * Save WhatsApp Connection State
+   * Save WhatsApp Connection State.
    */
   sock.ev.on('creds.update', saveCreds)
 
@@ -53,7 +53,10 @@ const tryConnect = async () => {
       logging.add(`Connection Closed Due To ${lastDisconnect?.error}, Reconneting ${shouldReconnect}`)
 
       if (shouldReconnect) {
-        tryConnect()
+        logging.add('Reconneting in 2.5s...')
+        setTimeout(() => {
+          tryConnect()
+        }, 2500);
       };
     } else if (connection === 'open') {
       logging.add('Opened Connection')
@@ -62,26 +65,26 @@ const tryConnect = async () => {
   })
 
   /**
-   * Reciving A Message from WhatsApp
+   * Reciving A Message from WhatsApp.
    */
   sock.ev.on('messages.upsert', async (m) => {
     const msg = m.messages[0];
 
     /**
-     * Make Log for Development
+     * Make Log for Development.
      */
     console.log(`${(msg.key.fromMe) ? '> [ME] ' : '\n> '}${msg.key.remoteJid} ${msg.participant || msg.key.participant} => ${(getContentType((msg.message) ? msg.message : undefined)) ? `[ -${getContentType((msg.message) ? msg.message : undefined)?.toUpperCase()}- ] ` : ''}${(msg.message?.conversation) ? msg.message?.conversation : (msg.message?.extendedTextMessage?.text) ? msg.message?.extendedTextMessage?.text : ''}`)
     fs.writeFileSync(`${process.cwd()}/DataStore/temp.json`, JSON.stringify(msg))
 
     /**
-     * Check Conversation
+     * Check Conversation.
      */
     ModularCmd.check(sock, msg)
   })
 }
 
 /**
- * Main Connection Function
+ * Main Connection Function.
  * @public
  */
 export default {

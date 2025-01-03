@@ -12,3 +12,15 @@
  * exact copy.  The resulting work is called a "modified version" of the
  * earlier work or a work "based on" the earlier work.
  */
+
+/**
+ * Parse Text Properties from Gemini Model to WhatsApp Text Properties.
+ * @public
+ */
+const geminiParser = (text: string) => {
+  let parsedText: string = text.replaceAll(/\*\*(.*)\*\*/g, "*$1*")
+  parsedText = parsedText.replaceAll(/\* (.*)/g, "- $1")
+  return parsedText
+}
+
+export default geminiParser
