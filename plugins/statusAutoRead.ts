@@ -17,7 +17,7 @@ import type { WAMessage, WASocket } from "@whiskeysockets/baileys";
 import logging from "../modules/logging";
 
 /**
- * Auto Read user status is avaiable.
+ * Auto Read user status if avaiable.
  * @public
  */
 const statusAutoRead = async (sock: WASocket, msg: WAMessage) => {

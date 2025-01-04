@@ -27,6 +27,7 @@ import logging from "../modules/logging";
 const generalAI = async (sock: WASocket, msg: WAMessage) => {
   try {
     if (!msg.key.fromMe && msg.message) {
+
       /**
        * This is a Chat Session Key.
        */
@@ -47,6 +48,7 @@ const generalAI = async (sock: WASocket, msg: WAMessage) => {
       const tagsCheck = (): boolean => ((msg.message?.extendedTextMessage?.contextInfo?.mentionedJid?.includes(`${sock.user?.id.split(':')[0]}@s.whatsapp.net`))) || caption.includes(`${sock.user?.id.split(':')[0]}`) 
       const replyCheck = (): boolean | undefined => (msg.message?.extendedTextMessage?.contextInfo?.quotedMessage) ? (msg.message.extendedTextMessage.contextInfo.participant?.includes(`${sock.user?.id.split(':')[0]}@s.whatsapp.net`)) : false
       if (pcCheck() || ( gcCheck() && (tagsCheck() || replyCheck()) )) {
+        
         /**
          * Indicator if chat being responded.
          */
