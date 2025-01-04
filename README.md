@@ -1,12 +1,10 @@
 <div align="center">
-    <br />
     <p>
-        <a href="https://syeifsultan.vercel.app"><img src="" title="GeminiOnWA" alt="GeminiOnWA" width="500" /></a>
+        <a href="https://syeifsultan.vercel.app"><img src="https://raw.githubusercontent.com/Goldn7799/GeminiOnWA/refs/heads/main/Gbanner.png" title="GeminiOnWA" alt="GeminiOnWA" width="650" /></a>
     </p>
-    <br />
 </div>
 
-# GeminiOnWA
+# About
 Make Gemini Avaiable on WhatsApp for the First Time.
 
 ## How To Install
