@@ -24,7 +24,7 @@ import logging from "../modules/logging";
  * Default WhatsApp Response from AI({@link prompt}).
  * @public
  */
-const generalAI = async (sock: WASocket, msg: WAMessage) => {
+const generalAI = async (sock: WASocket, msg: WAMessage): Promise<boolean> => {
   try {
     if (!msg.key.fromMe && msg.message) {
 
@@ -48,7 +48,6 @@ const generalAI = async (sock: WASocket, msg: WAMessage) => {
       const tagsCheck = (): boolean => ((msg.message?.extendedTextMessage?.contextInfo?.mentionedJid?.includes(`${sock.user?.id.split(':')[0]}@s.whatsapp.net`))) || caption.includes(`${sock.user?.id.split(':')[0]}`) 
       const replyCheck = (): boolean | undefined => (msg.message?.extendedTextMessage?.contextInfo?.quotedMessage) ? (msg.message.extendedTextMessage.contextInfo.participant?.includes(`${sock.user?.id.split(':')[0]}@s.whatsapp.net`)) : false
       if (pcCheck() || ( gcCheck() && (tagsCheck() || replyCheck()) )) {
-        
         /**
          * Indicator if chat being responded.
          */
@@ -87,13 +86,15 @@ const generalAI = async (sock: WASocket, msg: WAMessage) => {
           smallDB.update(session, aiRes?.history)
           await sock.sendMessage(session, { text: geminiParser(`${aiRes?.result}`) }, { quoted: msg })
           await sock.sendPresenceUpdate('available', session)
-        }
-      };
-    }
+          return true
+        } else return false
+      } else return false
+    } else return false
   } catch (err) {
     await sock.sendMessage(msg.key.remoteJid!, { text: "Yah Media nya gak bisa ke download :<" }, { quoted: msg })
     await sock.sendPresenceUpdate('available', msg.key.remoteJid!)
     logging.add(`${err}`)
+    return true
   }
 }
 

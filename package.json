@@ -2,7 +2,7 @@
   "name": "geminionwa",
   "module": "index.ts",
   "type": "module",
-  "version": "1.0.1-R2",
+  "version": "1.0.1-R3",
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@types/bun": "latest",

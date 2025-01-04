@@ -16,14 +16,30 @@
 import type { WAMessage, WASocket } from "@whiskeysockets/baileys"
 import generalAI from "../../plugins/generalAI"
 import statusAutoRead from "../../plugins/statusAutoRead"
+import spamProtection from "../WhatsApp/spamProtection"
 
 /**
  * Check Conversation to system, and reply it if avaiable.
  * @public
  */
 const check = async (sock: WASocket, msg: WAMessage) => {
-  await generalAI(sock, msg)
+  let isCompleting: boolean = false
+
+  //// PUGIN PLACE ////
+  // Make isCompleting to true if Bot send a Feedback to Protect from Spam.
+
+  if (await generalAI(sock, msg)) isCompleting = true
   await statusAutoRead(sock, msg)
+  
+  //// END PLUGIN PLACE ////
+
+  /**
+   * Check the Completing and add ChatCount.
+   */
+  if (isCompleting) {
+    const thisParticipant = (msg.participant) ? msg.participant : (msg.key.participant) ? msg.key.participant : (msg.key.remoteJid) ? msg.key.remoteJid : ''
+    spamProtection.addChatCount(thisParticipant)
+  };
 }
 
 export default check

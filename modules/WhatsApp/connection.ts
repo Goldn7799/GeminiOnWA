@@ -17,6 +17,7 @@ import makeWASocket, { Browsers, DisconnectReason, getContentType, useMultiFileA
 import { Boom } from "@hapi/boom";
 import logging from "../logging";
 import fs from 'fs'
+import spamProtection from "./spamProtection";
 import ModularCmd from "../ModularCmd";
 
 /**
@@ -69,17 +70,21 @@ const tryConnect = async () => {
    */
   sock.ev.on('messages.upsert', async (m) => {
     const msg = m.messages[0];
+    const thisParticipant = (msg.participant) ? msg.participant : (msg.key.participant) ? msg.key.participant : (msg.key.remoteJid) ? msg.key.remoteJid : ''
 
     /**
      * Make Log for Development.
      */
-    console.log(`${(msg.key.fromMe) ? '> [ME] ' : '\n> '}${msg.key.remoteJid} ${msg.participant || msg.key.participant} => ${(getContentType((msg.message) ? msg.message : undefined)) ? `[ -${getContentType((msg.message) ? msg.message : undefined)?.toUpperCase()}- ] ` : ''}${(msg.message?.conversation) ? msg.message?.conversation : (msg.message?.extendedTextMessage?.text) ? msg.message?.extendedTextMessage?.text : ''}`)
+    const spamProtectionGate = spamProtection.check(thisParticipant, msg.key.remoteJid!, sock)
+    console.log(`${(msg.key.fromMe) ? '> [ME] ' : '\n> '} ${(spamProtectionGate) ? '[ A ]' : '[ D ]'}${(msg.key.remoteJid?.includes('@g.us') ? ` (${msg.key.remoteJid}) ` : ' ')}${thisParticipant} => ${(getContentType((msg.message) ? msg.message : undefined)) ? `[ -${getContentType((msg.message) ? msg.message : undefined)?.toUpperCase()}- ] ` : ''}${(msg.message?.conversation) ? msg.message?.conversation : (msg.message?.extendedTextMessage?.text) ? msg.message?.extendedTextMessage?.text : ''}`)
     fs.writeFileSync(`${process.cwd()}/DataStore/temp.json`, JSON.stringify(msg))
 
     /**
      * Check Conversation.
      */
-    ModularCmd.check(sock, msg)
+    if (spamProtectionGate) {
+      ModularCmd.check(sock, msg)
+    };
   })
 }
 
